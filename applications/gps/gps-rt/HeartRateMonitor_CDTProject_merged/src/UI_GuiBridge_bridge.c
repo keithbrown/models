@@ -13,6 +13,7 @@
 #include "UI_classes.h"
 #include "UI_GuiBridge_bridge.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -34,6 +35,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <errno.h>
 #include <pthread.h>
 #endif
 
@@ -46,6 +48,11 @@
 SOCKET sock;                       /* socket details */
 
 void WorkerThread( void *dummy );
+#if defined(_WIN32) || defined(WIN32)
+void handle_error(void);           /* Error handler routine */
+#elif defined(__unix__)
+void handle_error(char *msg);           /* Error handler routine */
+void handle_error_en(int en, char *msg);
 void handle_error(void);           /* Error handler routine */
 
 /*
@@ -156,12 +163,11 @@ UI_GuiBridge_connect( void )
   float socklib_ver;               /* socket dll version */
 #elif defined(__unix__)
 pthread_t   threadId;
+int en;
 #endif
   struct sockaddr_in address;      /* socket address stuff */
   char cIP[50];
   
-  while (TRUE) /* continue till a connection has been made */
-  {
 #if defined(_WIN32) || defined(WIN32)
     wVersionRequested = MAKEWORD( 1, 1 );
     if ( WSAStartup( wVersionRequested, &wsaData ) != 0 )
@@ -175,30 +181,32 @@ pthread_t   threadId;
     }
 #endif
 
-    if ( (sock = socket(AF_INET, SOCK_STREAM, 0))
 #if defined(_WIN32) || defined(WIN32)
-          == INVALID_SOCKET 
-#else
-          < 0
+  if ( (sock = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET )
+    handle_error();
+#elif defined(__unix__)
+  if ( (sock = socket(AF_INET, SOCK_STREAM, 0)) < 0 )
+    handle_error_en(sock, "Socket creation error ");
 #endif
-       )
-      handle_error();
 
     address.sin_family=AF_INET;       /* internet */
     address.sin_port = htons(2003);   /* port 2003 */
 
     strcpy(cIP, "127.0.0.1");         /* local host */
     address.sin_addr.s_addr = inet_addr(cIP);
-    if ((connect(sock,(struct sockaddr *) &address, sizeof(address))) == 0)
-      break;
-	else
+#if defined(_WIN32) || defined(WIN32)
+  if ((connect(sock,(struct sockaddr *) &address, sizeof(address))) != 0)
       handle_error();
-  }
+#elif defined(__unix__)
+  if ((en = connect(sock,(struct sockaddr *) &address, sizeof(address))) < 0)
+    handle_error_en(en, "Socket connect error ");
+#endif
   // start a new thread to handle messages from the GUI
 #if defined(_WIN32) || defined(WIN32)
   _beginthread( WorkerThread, 0, NULL );
 #elif defined(__unix__)
-  pthread_create(&threadId, NULL, (void*(*)(void*))WorkerThread, NULL);
+  if ((en = pthread_create(&threadId, NULL, (void*(*)(void*))WorkerThread, NULL)) < 0)
+    handle_error_en(en, "Thread create error ");
 #endif
 }
  
@@ -313,9 +321,9 @@ void WorkerThread( void *dummy )
   exit(0);
 }
 
-void handle_error()
-{
 #if defined(_WIN32) || defined(WIN32)
+void handle_error(void)
+{
   switch ( WSAGetLastError() )
   {
   case WSANOTINITIALISED :
@@ -395,9 +403,18 @@ void handle_error()
     break;
   }
   WSACleanup();
+}
 #elif defined(__unix__)
-  printf("Socket error\n");
-#endif
+void handle_error(char *msg)
+{
+  perror(msg);
+  exit(EXIT_FAILURE);
 }
 
+void handle_error_en(int en, char *msg)
+{
+   errno = en;
+   handle_error(msg);
+}
+#endif
 

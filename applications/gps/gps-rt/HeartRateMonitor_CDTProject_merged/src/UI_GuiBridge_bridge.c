@@ -54,6 +54,7 @@ void handle_error(void);           /* Error handler routine */
 void handle_error(char *msg);           /* Error handler routine */
 void handle_error_en(int en, char *msg);
 void handle_error(void);           /* Error handler routine */
+#endif
 
 /*
  * Bridge:  feedSetTargetPressedEvent

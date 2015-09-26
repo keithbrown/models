@@ -11,7 +11,7 @@ BUILDTOOLS=x86-gcc-4.6.3
 endif
 
 # Location of RTS root.
-UMLRTS_ROOT ?= /home/lee/eclipse/plugins/org.eclipse.papyrusrt.rts_0.5.0.201508180602/umlrts
+UMLRTS_ROOT ?= /opt/xtuml/Papyrus2/eclipse/plugins/org.eclipse.papyrusrt.rts_0.7.0.201509010602/umlrts
 
 CONFIG=$(TARGETOS).$(BUILDTOOLS)
 
@@ -22,6 +22,7 @@ include $(UMLRTS_ROOT)/build/host/host.mk
 include $(UMLRTS_ROOT)/build/buildtools/$(BUILDTOOLS)/buildtools.mk
 
 C_EXT=.c
+OBJ_EXT=.o
 LD_PATHS=$(LIBDEST)
 CC_INCLUDES+=$(UMLRTS_ROOT)/include
 
@@ -110,7 +111,7 @@ $(MAIN): $(OBJS) $(UMLRTS_ROOT)/lib/$(CONFIG)/$(LIB_PRFX)rts$(LIB_EXT)
 	$(CC) $< $(CC_FLAGS) $(CC_DEFINES) $(CC_INCLUDES) $(CC_OUT)$@
 
 clean :
-	@echo $(RM) main$(EXE_EXT) *$(OBJ_EXT) *$(DEP_EXT) $(DBG_FILES)
-	@$(RM) main$(EXE_EXT) *$(OBJ_EXT) *$(DEP_EXT) $(DBG_FILES)
+	@echo $(RM) TopMain$(EXE_EXT) *$(OBJ_EXT) *$(DEP_EXT) $(DBG_FILES)
+	@$(RM) TopMain$(EXE_EXT) *$(OBJ_EXT) *$(DEP_EXT) $(DBG_FILES)
 
 .PHONY: all clean

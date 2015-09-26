@@ -15,20 +15,20 @@ class Capsule_HeartRateMonitor : public UMLRTCapsule
 {
 public:
     Capsule_HeartRateMonitor( const UMLRTCapsuleClass * cd, UMLRTSlot * st, const UMLRTCommsPort * * border, const UMLRTCommsPort * * internal, bool isStat );
+protected:
+    HeartRateMonitorProtocol::Base HeartRatePort;
+public:
     enum BorderPortId
     {
         borderport_HeartRatePort
     };
 protected:
-    HeartRateMonitorProtocol_baserole HeartRatePort() const;
+    UMLRTTimerProtocol_baserole timer;
 public:
     enum InternalPortId
     {
         internalport_timer
     };
-protected:
-    UMLRTTimerProtocol_baserole timer() const;
-public:
     enum PartId
     {
     };
@@ -55,17 +55,16 @@ private:
     };
     const char * stateNames[2];
     State currentState;
-    void entryaction_____top__init__ActionChain3__EntryAction10( const UMLRTInMessage & msg );
-    void entryaction_____top__onUnregisterListener__ActionChain5__EntryAction13( const UMLRTInMessage & msg );
-    void entryaction_____top__updateHeartbeat__ActionChain7__EntryAction15( const UMLRTInMessage & msg );
-    void transitionaction_____top__init__ActionChain3__onInit( const UMLRTInMessage & msg );
-    void transitionaction_____top__onRegisterListener__ActionChain4__TransitionAction11( const UMLRTInMessage & msg );
-    void transitionaction_____top__onUnregisterListener__ActionChain5__TransitionAction12( const UMLRTInMessage & msg );
-    void transitionaction_____top__updateHeartbeat__ActionChain7__TransitionAction14( const UMLRTInMessage & msg );
-    void actionchain_____top__init__ActionChain3( const UMLRTInMessage & msg );
-    void actionchain_____top__onRegisterListener__ActionChain4( const UMLRTInMessage & msg );
-    void actionchain_____top__onUnregisterListener__ActionChain5( const UMLRTInMessage & msg );
-    void actionchain_____top__updateHeartbeat__ActionChain7( const UMLRTInMessage & msg );
+    void entryaction_____top__idle__EntryAction9( const UMLRTInMessage & msg );
+    void entryaction_____top__monitoring__EntryAction13( const UMLRTInMessage & msg );
+    void transitionaction_____top__init__ActionChain2__onInit( const UMLRTInMessage & msg );
+    void transitionaction_____top__onRegisterListener__ActionChain3__TransitionAction10( const UMLRTInMessage & msg );
+    void transitionaction_____top__onUnregisterListener__ActionChain4__TransitionAction11( const UMLRTInMessage & msg );
+    void transitionaction_____top__updateHeartbeat__ActionChain6__TransitionAction12( const UMLRTInMessage & msg );
+    void actionchain_____top__init__ActionChain2( const UMLRTInMessage & msg );
+    void actionchain_____top__onRegisterListener__ActionChain3( const UMLRTInMessage & msg );
+    void actionchain_____top__onUnregisterListener__ActionChain4( const UMLRTInMessage & msg );
+    void actionchain_____top__updateHeartbeat__ActionChain6( const UMLRTInMessage & msg );
     State junction_____top__Junction1( const UMLRTInMessage & msg );
     State state_____top__monitoring( const UMLRTInMessage & msg );
     State state_____top__idle( const UMLRTInMessage & msg );

@@ -7,47 +7,30 @@
 #include "umlrtsignal.hh"
 struct UMLRTCommsPort;
 
-class HeartRateMonitorProtocol : public UMLRTProtocol
+namespace HeartRateMonitorProtocol
 {
-public:
+    class Base : public UMLRTProtocol
+    {
+    public:
+        Base( const UMLRTCommsPort * & srcPort );
+        UMLRTOutSignal registerListener() const;
+        UMLRTOutSignal unregisterListener() const;
+        UMLRTOutSignal updateHeartRate( int heartRate ) const;
+    };
     enum SignalId
     {
         signal_registerListener = UMLRTSignal::FIRST_PROTOCOL_SIGNAL_ID,
         signal_unregisterListener,
         signal_updateHeartRate
     };
-    class OutSignals
+    class Conj : public UMLRTProtocol
     {
     public:
-        UMLRTOutSignal registerListener( const UMLRTCommsPort * sourcePort ) const;
-        UMLRTOutSignal unregisterListener( const UMLRTCommsPort * sourcePort ) const;
-        UMLRTOutSignal updateHeartRate( const UMLRTCommsPort * sourcePort, int heartRate ) const;
+        Conj( const UMLRTCommsPort * & srcPort );
+        UMLRTOutSignal registerListener() const;
+        UMLRTOutSignal unregisterListener() const;
+        UMLRTOutSignal updateHeartRate( int heartRate ) const;
     };
-    class InSignals
-    {
-    public:
-        UMLRTOutSignal registerListener( const UMLRTCommsPort * sourcePort ) const;
-        UMLRTOutSignal unregisterListener( const UMLRTCommsPort * sourcePort ) const;
-        UMLRTOutSignal updateHeartRate( const UMLRTCommsPort * sourcePort, int heartRate ) const;
-    };
-    typedef OutSignals Base;
-    typedef InSignals Conjugate;
-};
-class HeartRateMonitorProtocol_baserole : protected UMLRTProtocol, private HeartRateMonitorProtocol::Base
-{
-public:
-    HeartRateMonitorProtocol_baserole( const UMLRTCommsPort * srcPort );
-    UMLRTOutSignal registerListener() const;
-    UMLRTOutSignal unregisterListener() const;
-    UMLRTOutSignal updateHeartRate( int heartRate ) const;
-};
-class HeartRateMonitorProtocol_conjrole : protected UMLRTProtocol, private HeartRateMonitorProtocol::Conjugate
-{
-public:
-    HeartRateMonitorProtocol_conjrole( const UMLRTCommsPort * srcPort );
-    UMLRTOutSignal registerListener() const;
-    UMLRTOutSignal unregisterListener() const;
-    UMLRTOutSignal updateHeartRate( int heartRate ) const;
 };
 
 #endif

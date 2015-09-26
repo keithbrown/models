@@ -18,7 +18,7 @@ public:
         borderport_GPSPort
     };
 protected:
-    HeartRateMonitorProtocol_baserole GPSPort() const;
+    HeartRateMonitorProtocol::Base GPSPort;
 public:
     enum PartId
     {
@@ -44,9 +44,8 @@ private:
     };
     const char * stateNames[2];
     State currentState;
-    void entryaction_____top__initialize__ActionChain2__onEntry( const UMLRTInMessage & msg );
-    void entryaction_____top__reupdate__ActionChain6__onEntry( const UMLRTInMessage & msg );
-    void entryaction_____top__update__ActionChain4__onEntry( const UMLRTInMessage & msg );
+    void entryaction_____top__Initializing__onEntry( const UMLRTInMessage & msg );
+    void entryaction_____top__Updating__onEntry( const UMLRTInMessage & msg );
     void transitionaction_____top__initialize__ActionChain2__onInit( const UMLRTInMessage & msg );
     void actionchain_____top__initialize__ActionChain2( const UMLRTInMessage & msg );
     void actionchain_____top__reupdate__ActionChain6( const UMLRTInMessage & msg );

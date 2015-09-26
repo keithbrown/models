@@ -22,6 +22,7 @@ static Capsule_GPSWatch *m_pInstance;
 
 Capsule_GPSWatch::Capsule_GPSWatch( const UMLRTCapsuleClass * cd, UMLRTSlot * st, const UMLRTCommsPort * * border, const UMLRTCommsPort * * internal, bool isStat )
 : UMLRTCapsule( NULL, cd, st, border, internal, isStat )
+, GPSPort( borderPorts[borderport_GPSPort] )
 , currentState( SPECIAL_INTERNAL_STATE_UNVISITED )
 {
     stateNames[top__Updating] = "top__Updating";
@@ -30,10 +31,6 @@ Capsule_GPSWatch::Capsule_GPSWatch( const UMLRTCapsuleClass * cd, UMLRTSlot * st
 }
 
 
-HeartRateMonitorProtocol_baserole Capsule_GPSWatch::GPSPort() const
-{
-    return HeartRateMonitorProtocol_baserole( borderPorts[borderport_GPSPort] );
-}
 
 
 
@@ -90,35 +87,28 @@ const char * Capsule_GPSWatch::getCurrentStateString() const
 
 void Capsule_GPSWatch::sendRegisterListener()
 {
-   GPSPort().registerListener().send();
+   GPSPort.registerListener().send();
 }
 
 void Capsule_GPSWatch::sendUnRegisterListener()
 {
-   GPSPort().unregisterListener().send();
+   GPSPort.unregisterListener().send();
 }
 
 
-void Capsule_GPSWatch::entryaction_____top__initialize__ActionChain2__onEntry( const UMLRTInMessage & msg )
+void Capsule_GPSWatch::entryaction_____top__Initializing__onEntry( const UMLRTInMessage & msg )
 {
+    // UMLRT-CODEGEN:platform:/resource/HeartRateMonitor/model.uml#_eYLUYEAbEeWuMdCV7Og4wQ
     uint8_t buff0[msg.sizeDecoded()];
     void * const rtdata = buff0;
-    std::cout << getName() << ": initialize" << std::endl;
     msg.decode( rtdata );
+    GPSPort.registerListener().send();
     msg.destroy( (void *)buff0 );
 }
 
-void Capsule_GPSWatch::entryaction_____top__reupdate__ActionChain6__onEntry( const UMLRTInMessage & msg )
+void Capsule_GPSWatch::entryaction_____top__Updating__onEntry( const UMLRTInMessage & msg )
 {
-    uint8_t buff0[msg.sizeDecoded()];
-    int & rtdata = *(int *)buff0;
-    msg.decode( &rtdata );
-    std::cout << getName() << ": Heart rate update" << std::endl;
-    msg.destroy( (void *)buff0 );
-}
-
-void Capsule_GPSWatch::entryaction_____top__update__ActionChain4__onEntry( const UMLRTInMessage & msg )
-{
+    // UMLRT-CODEGEN:platform:/resource/HeartRateMonitor/model.uml#_yNKTEEAhEeWuMdCV7Og4wQ
     uint8_t buff0[msg.sizeDecoded()];
     int & rtdata = *(int *)buff0;
     msg.decode( &rtdata );
@@ -139,17 +129,17 @@ void Capsule_GPSWatch::transitionaction_____top__initialize__ActionChain2__onIni
 void Capsule_GPSWatch::actionchain_____top__initialize__ActionChain2( const UMLRTInMessage & msg )
 {
     transitionaction_____top__initialize__ActionChain2__onInit( msg );
-    entryaction_____top__initialize__ActionChain2__onEntry( msg );
+    entryaction_____top__Initializing__onEntry( msg );
 }
 
 void Capsule_GPSWatch::actionchain_____top__reupdate__ActionChain6( const UMLRTInMessage & msg )
 {
-    entryaction_____top__reupdate__ActionChain6__onEntry( msg );
+    entryaction_____top__Updating__onEntry( msg );
 }
 
 void Capsule_GPSWatch::actionchain_____top__update__ActionChain4( const UMLRTInMessage & msg )
 {
-    entryaction_____top__update__ActionChain4__onEntry( msg );
+    entryaction_____top__Updating__onEntry( msg );
 }
 
 Capsule_GPSWatch::State Capsule_GPSWatch::state_____top__Updating( const UMLRTInMessage & msg )
